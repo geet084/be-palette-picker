@@ -64,3 +64,50 @@ app.get('/api/v1/palettes/:id', (req, res) => {
     })
 });
 
+app.post('/api/v1/projects', (req, res) => {
+  const { project_name } = req.body
+
+  for (let reqParam of ['project_name']) {
+    if (!req.body[reqParam]) {
+      return res.status(422).send({
+        error: `Expected format: { project_name: <String> }. You're missing a "${reqParam}" property!`
+      })
+    }
+  }
+
+  database('projects').insert({ project_name }, 'id')
+    .then(project => {
+      if (project[0]) {
+        res.status(201).json({ id: project[0], ...req.body })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error })
+    })
+});
+
+app.post('/api/v1/palettes', (req, res) => {
+  const { palette_name, color_1, color_2, color_3, color_4, color_5, project_id } = req.body
+
+  for (let reqParam of ['palette_name', 'color_1', 'color_2', 'color_3', 'color_4', 'color_5', 'project_id']) {
+    if (!req.body[reqParam]) {
+      return res.status(422).send({
+        error: `Expected format: { palette_name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String>, project_id: <Integer> }. You're missing a "${reqParam}" property!`
+      })
+    }
+  }
+
+  database('palettes').insert({
+    palette_name, color_1, color_2, color_3, color_4, color_5, project_id
+  }, 'id')
+    .then(palette => {
+      if (palette[0]) {
+        res.status(201).json({ id: palette[0], ...req.body })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error })
+    })
+});
+
+
