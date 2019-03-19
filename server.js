@@ -169,4 +169,78 @@ app.delete('/api/v1/projects/:id', (req, res) => {
     })
 })
 
+app.put('/api/v1/projects/:id', (req, res) => {
+  const { id } = req.params
+  let found = false
 
+  const { project_name } = req.body
+
+  for (let reqParam of ['project_name']) {
+    if (!req.body[reqParam]) {
+      return res.status(422).send({
+        error: `Expected format: { project_name: <String> }. You're missing a "${reqParam}" property!`
+      })
+    }
+  }
+
+  database('projects').select()
+    .then(projects => {
+      projects.forEach(project => {
+        if (project.id === parseInt(id)) {
+          found = true
+        }
+      })
+      if (!found) {
+        return res.status(404).json(`Project not found! Update unsuccessful.`)
+      } else {
+        database('projects').where('id', id).update({ project_name })
+          .then(project => {
+            res.status(200).json(`Project with ID of ${id} has been updated successfully.`)
+          })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error })
+    })
+})
+
+app.put('/api/v1/projects/:id/palettes', (req, res) => {
+  const { id } = req.params
+  let found = false
+  const { palette_name, color_1, color_2, color_3, color_4, color_5 } = req.body
+
+  for (let reqParam of ['palette_name', 'color_1', 'color_2', 'color_3', 'color_4', 'color_5']) {
+    if (!req.body[reqParam]) {
+      return res.status(422).send({
+        error: `Expected format: { palette_name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String> }. You're missing a "${reqParam}" property!`
+      })
+    }
+  }
+
+  database('palettes').select()
+    .then(palettes => {
+      palettes.forEach(palette => {
+        if (palette.project_id === parseInt(id)) {
+          found = true
+        }
+      })
+      if (!found) {
+        return res.status(404).json(`Palette not found! Update unsuccessful.`)
+      } else {
+        database('palettes').where('project_id', id).update({
+          palette_name,
+          color_1,
+          color_2,
+          color_3,
+          color_4,
+          color_5
+        })
+          .then(palette => { 
+            res.status(200).json(`Palette with project_id of ${id} has been updated successfully.`)
+          })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error })
+    })
+})
