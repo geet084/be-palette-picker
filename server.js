@@ -54,10 +54,10 @@ app.get('/api/v1/projects/:id', (req, res) => {
     })
 });
 
-app.get('/api/v1/palettes/:id', (req, res) => {
-  const { id } = req.params
+app.get('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
+  const { p_id } = req.params
 
-  database('palettes').where('id', id).select()
+  database('palettes').where('id', p_id).select()
     .then(palette => {
       if (palette[0]) {
         res.status(200).json(palette[0])
@@ -92,19 +92,20 @@ app.post('/api/v1/projects', (req, res) => {
     })
 });
 
-app.post('/api/v1/palettes', (req, res) => {
-  const { palette_name, color_1, color_2, color_3, color_4, color_5, project_id } = req.body
+app.post('/api/v1/projects/:id/palettes', (req, res) => {
+  const { id } = req.params
+  const { palette_name, color_1, color_2, color_3, color_4, color_5 } = req.body
 
-  for (let reqParam of ['palette_name', 'color_1', 'color_2', 'color_3', 'color_4', 'color_5', 'project_id']) {
+  for (let reqParam of ['palette_name', 'color_1', 'color_2', 'color_3', 'color_4', 'color_5']) {
     if (!req.body[reqParam]) {
       return res.status(422).send({
-        error: `Expected format: { palette_name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String>, project_id: <Integer> }. You're missing a "${reqParam}" property!`
+        error: `Expected format: { palette_name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String> }. You're missing a "${reqParam}" property!`
       })
     }
   }
 
   database('palettes').insert({
-    palette_name, color_1, color_2, color_3, color_4, color_5, project_id
+    palette_name, color_1, color_2, color_3, color_4, color_5, project_id: id
   }, 'id')
     .then(palette => {
       if (palette[0]) {
@@ -116,23 +117,23 @@ app.post('/api/v1/palettes', (req, res) => {
     })
 });
 
-app.delete('/api/v1/palettes/:id', (req, res) => {
-  const { id } = req.params
+app.delete('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
+  const { p_id } = req.params
   let found = false
 
   database('palettes').select()
     .then(palettes => {
       palettes.forEach(palette => {
-        if (palette.id === parseInt(id)) {
+        if (palette.id === parseInt(p_id)) {
           found = true
         }
       })
       if (!found) {
         return res.status(404).json(`Palette not found! Delete unsuccessful.`)
       } else {
-        database('palettes').where('id', parseInt(id)).del()
+        database('palettes').where('id', parseInt(p_id)).del()
           .then(() => {
-            res.status(202).json(`Deleted palette with ID of ${id}`)
+            res.status(202).json(`Deleted palette with ID of ${p_id}`)
           })
       }
     })
@@ -204,8 +205,8 @@ app.put('/api/v1/projects/:id', (req, res) => {
     })
 })
 
-app.put('/api/v1/projects/:id/palettes', (req, res) => {
-  const { id } = req.params
+app.put('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
+  const { p_id } = req.params
   let found = false
   const { palette_name, color_1, color_2, color_3, color_4, color_5 } = req.body
 
@@ -220,14 +221,14 @@ app.put('/api/v1/projects/:id/palettes', (req, res) => {
   database('palettes').select()
     .then(palettes => {
       palettes.forEach(palette => {
-        if (palette.project_id === parseInt(id)) {
+        if (palette.id === parseInt(p_id)) {
           found = true
         }
       })
       if (!found) {
         return res.status(404).json(`Palette not found! Update unsuccessful.`)
       } else {
-        database('palettes').where('project_id', id).update({
+        database('palettes').where('id', p_id).update({
           palette_name,
           color_1,
           color_2,
@@ -235,8 +236,8 @@ app.put('/api/v1/projects/:id/palettes', (req, res) => {
           color_4,
           color_5
         })
-          .then(palette => { 
-            res.status(200).json(`Palette with project_id of ${id} has been updated successfully.`)
+          .then(palette => {
+            res.status(200).json(`Palette with ID of ${p_id} has been updated successfully.`)
           })
       }
     })
