@@ -5,13 +5,18 @@
   "main": "knexfile.js",
   "dependencies": {
     "express": "^4.16.4",
+    "jest": "^24.5.0",
     "knex": "^0.16.3",
-    "pg": "^7.9.0"
+    "pg": "^7.9.0",
+    "supertest": "^4.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/polyfill": "^7.4.0",
+    "babel-jest": "^24.5.0"
+  },
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll"
   },
   "author": "",
   "license": "ISC"
