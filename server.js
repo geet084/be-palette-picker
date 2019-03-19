@@ -22,10 +22,16 @@ app.get('/api/v1/projects', (req, res) => {
     })
 });
 
-app.get('/api/v1/palettes', (req, res) => {
-  database('palettes').select()
+app.get('/api/v1/projects/:id/palettes', (req, res) => {
+  const { id } = req.params;
+
+  database('palettes').where('project_id', id).select()
     .then(palettes => {
-      res.status(200).json(palettes)
+      if (palettes[0]) {
+        res.status(200).json(palettes)
+      } else {
+        res.status(404).json(`No projects associated with this project!`)
+      }
     })
     .catch(error => {
       res.status(500).json({ error })
@@ -103,6 +109,31 @@ app.post('/api/v1/palettes', (req, res) => {
     .then(palette => {
       if (palette[0]) {
         res.status(201).json({ id: palette[0], ...req.body })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ error })
+    })
+});
+
+app.delete('/api/v1/palettes/:id', (req, res) => {
+  const { id } = req.params
+  let found = false
+
+  database('palettes').select()
+    .then(palettes => {
+      palettes.forEach(palette => {
+        if (palette.id === parseInt(id)) {
+          found = true
+        }
+      })
+      if (!found) {
+        return res.status(404).json(`Palette not found! Delete unsuccessful`)
+      } else {
+        database('palettes').where('id', parseInt(id)).del()
+          .then(() => {
+            res.status(202).json(`Deleted palette with ID of ${id}`)
+          })
       }
     })
     .catch(error => {
