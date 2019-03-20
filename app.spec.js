@@ -149,4 +149,60 @@ describe('Server', () => {
     })
   })
 
+  describe('POST /api/v1/projects/:id/palettes', () => {
+    it('should return a status of 200 if OK', async () => {
+      const newPalette = { 
+        palette_name: 'test',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+      
+      const project = await database('projects').first()
+      const id = project.id
+
+      const response = await request(app).post(`/api/v1/projects/${id}/palettes`).send(newPalette);
+
+      expect(response.status).toBe(201)
+    })
+
+    it('should return a status of 404 if not OK', async () => {
+      const newPaletteWrong = {
+        palette_namezzz: 'test',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+
+      const project = await database('projects').first()
+      const id = project.id
+
+      const response = await request(app).post(`/api/v1/projects/${id}/palettes`).send(newPaletteWrong);
+
+      expect(response.status).toBe(422)
+    })
+
+    it('should post a new palette', async () => {
+      const newPalette = {
+        palette_name: 'test',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+
+      const project = await database('projects').first()
+      const id = project.id
+
+      const response = await request(app).post(`/api/v1/projects/${id}/palettes`).send(newPalette);
+
+      const results = response.body
+      expect(results.palette_name).toEqual(newPalette.palette_name)
+    }) 
+  })
 })
