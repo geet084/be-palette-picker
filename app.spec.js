@@ -302,6 +302,16 @@ describe('Server', () => {
       expect(response.status).toBe(404)
     })
 
+    it('should return a status of 422 if the correct params were not provided', async () => {
+      const projectToUpdate = await database('projects').first()
+      const id = projectToUpdate.id
+      const updatedProject = { wrong_project_name: 'THIS has the wrong property' }
+
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject)
+
+      expect(response.status).toBe(422)
+    })
+
     it('should update a project with a new name', async () => {
       const projectToUpdate = await database('projects').first()
       const id = projectToUpdate.id
@@ -313,6 +323,86 @@ describe('Server', () => {
       
       expect(response.body).toEqual(expected)
       expect(foundProject[0].project_name).toEqual(updatedProject.project_name)
+    })
+  })
+
+  describe('PUT /api/v1/projects/:id/palettes/:p_id', () => {
+    it('should return a status of 200 if response is OK', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const paletteToUpdate = await database('palettes').where('project_id', id).first()
+      const p_id = paletteToUpdate.id
+      const updatedPalette = {
+        palette_name: 'palette NAME updated',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+
+      const response = await request(app).put(`/api/v1/projects/${id}/palettes/${p_id}`).send(updatedPalette)
+      
+      expect(response.status).toBe(200)
+    })
+
+    it('should return a status of 404 if palette is not found', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const p_id = -1
+      const updatedPalette = {
+        palette_name: 'palette NAME updated',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+
+      const response = await request(app).put(`/api/v1/projects/${id}/palettes/${p_id}`).send(updatedPalette)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should return a status of 422 if the correct params were not provided', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const paletteToUpdate = await database('palettes').where('project_id', id).first()
+      const p_id = paletteToUpdate.id
+      const updatedPalette = {
+        wrong_palette_name: 'palette property wrong',
+        color_1: 'aaaaaa',
+        color_2: 'aaaaaa',
+        color_3: 'aaaaaa',
+        color_4: 'aaaaaa',
+        color_5: 'aaaaaa'
+      }
+
+      const response = await request(app).put(`/api/v1/projects/${id}/palettes/${p_id}`).send(updatedPalette)
+
+      expect(response.status).toBe(422)
+    })
+
+    it('should update a palette with new information', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const paletteToUpdate = await database('palettes').where('project_id', id).first()
+      const p_id = paletteToUpdate.id
+      const updatedPalette = {
+        palette_name: 'palette NAME updated',
+        color_1: '111111',
+        color_2: '111111',
+        color_3: '111111',
+        color_4: '111111',
+        color_5: '111111'
+      }
+
+      const response = await request(app).put(`/api/v1/projects/${id}/palettes/${p_id}`).send(updatedPalette)
+      const expected = `Palette with ID of ${p_id} has been updated successfully.`
+      const foundPalette = await database('palettes').where('id', p_id)
+
+      expect(response.body).toEqual(expected)
+      expect(foundPalette[0].palette_name).toEqual(updatedPalette.palette_name)
     })
   })
 })
