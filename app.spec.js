@@ -74,8 +74,9 @@ describe('Server', () => {
 
     it('should return a specific project in the DB if the response is OK', async () => {
       const expectedProject = projects[0]
-      const foundProject = await database('projects').first()
-      const id = foundProject.id
+      const foundProject = await database('projects').where('project_name', 'front end project')
+      
+      const id = foundProject[0].id
 
       const response = await request(app).get(`/api/v1/projects/${id}`)
       const results = response.body
@@ -105,17 +106,47 @@ describe('Server', () => {
     })
 
     it('should return a specific palette for a project in the DB if the response is OK', async () => {
-      const expectedPalette = projects[1].palettes[1]
+      const expectedPalette = projects[1].palettes[0]
 
       const foundProject = await database('projects').where('project_name', 'back end project')
       const id = foundProject[0].id
-      const foundPalette = await database('palettes').where('project_id', id)
-      const p_id = foundPalette[1].id
+      const foundPalette = await database('palettes').where('palette_name', 'dreamy')
+      const p_id = foundPalette[0].id
 
       const response = await request(app).get(`/api/v1/projects/${id}/palettes/${p_id}`)
       const results = response.body
 
-      expect(results.palette_name).toEqual(expectedPalette.palette_name)
+      
+      expect(results.palette_name).toEqual
+      (expectedPalette.palette_name) 
     })
   })
+
+  describe('POST /projects', () => {
+    it('should return a status of 200 if OK', async () => {
+      const newProject = {project_name: 'new Project'}
+
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+
+      expect(response.status).toBe(201)
+    })
+
+    it('should return a status of 404 if not OK', async () => {
+      const newProject = { project_wrong_property: 'new Project' }
+      
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+
+      expect(response.status).toBe(422)
+    })
+
+    it('should post a new project', async () => {
+      const newProject = { project_name: 'new Project' }
+
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+      const result = response.body
+      
+      expect(result.project_name).toEqual(newProject.project_name )
+    })
+  })
+
 })
