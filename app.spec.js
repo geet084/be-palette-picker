@@ -205,4 +205,40 @@ describe('Server', () => {
       expect(results.palette_name).toEqual(newPalette.palette_name)
     }) 
   })
+
+  describe('DELETE /api/v1/projects/:id/palettes/:p_id', () => {
+    it('should return a status of 202 if delete is successful', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const paletteToDelete = await database('palettes').where('project_id', id)
+      const p_id = paletteToDelete[0].id
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/palettes/${p_id}`)
+
+      expect(response.status).toBe(202)
+    })
+
+    it('should return a status of 404 if there is no palette to delete', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const p_id = -1
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/palettes/${p_id}`)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should delete the correct palette', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+      const paletteToDelete = await database('palettes').where('project_id', id)
+      const p_id = paletteToDelete[0].id
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/palettes/${p_id}`)
+      const expected = `Deleted palette with ID of ${p_id}`
+
+      expect(response.body).toEqual(expected)
+    })
+  })
+
 })
