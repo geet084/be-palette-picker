@@ -281,4 +281,38 @@ describe('Server', () => {
       expect(foundPalettes.length).toEqual(0)
     })
   })
+
+  describe('PUT /api/v1/projects/:id', () => {
+    it('should return a status of 200 if response is OK', async () => {
+      const projectToUpdate = await database('projects').first()
+      const id = projectToUpdate.id
+      const updatedProject = {project_name: 'THIS has BEEN updated'}
+
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject)
+      
+      expect(response.status).toBe(200)
+    })
+
+    it('should return a status of 404 if project is not found', async () => {
+      const id = -1
+      const updatedProject = { project_name: 'THIS has not BEEN updated' }
+
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should update a project with a new name', async () => {
+      const projectToUpdate = await database('projects').first()
+      const id = projectToUpdate.id
+      const updatedProject = { project_name: 'THIS has BEEN updated' }
+
+      const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject)
+      const expected = `Project with ID of ${id} has been updated successfully.`
+      const foundProject = await database('projects').where('id', id)
+      
+      expect(response.body).toEqual(expected)
+      expect(foundProject[0].project_name).toEqual(updatedProject.project_name)
+    })
+  })
 })
