@@ -84,4 +84,38 @@ describe('Server', () => {
     })
   })
 
+  describe('GET /projects/:id/palettes/:p_id', () => {
+    it('should return a status of 200 if OK', async () => {
+      const firstProject = await database('projects').first()
+      const id = firstProject.id
+      const firstPalette = await database('palettes').first()
+      const p_id = firstPalette.id
+
+      const response = await request(app).get(`/api/v1/projects/${id}/palettes/${p_id}`);
+
+      expect(response.status).toBe(200)
+    })
+
+    it('should return a status of 404 if not OK', async () => {
+      const id = -1
+      const p_id = -2
+      const response = await request(app).get(`/api/v1/projects/${id}/palettes/${p_id}`)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should return a specific palette for a project in the DB if the response is OK', async () => {
+      const expectedPalette = projects[1].palettes[1]
+
+      const foundProject = await database('projects').where('project_name', 'back end project')
+      const id = foundProject[0].id
+      const foundPalette = await database('palettes').where('project_id', id)
+      const p_id = foundPalette[1].id
+
+      const response = await request(app).get(`/api/v1/projects/${id}/palettes/${p_id}`)
+      const results = response.body
+
+      expect(results.palette_name).toEqual(expectedPalette.palette_name)
+    })
+  })
 })
