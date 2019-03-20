@@ -55,4 +55,33 @@ describe('Server', () => {
       expect(results.length).toEqual(expectedPalettes)
     })
   })
+
+  describe('GET /projects/:id', () => {
+    it('should return a status of 200 if OK', async () => {
+      const firstProject = await database('projects').first()
+      const id = firstProject.id
+      const response = await request(app).get(`/api/v1/projects/${id}`);
+
+      expect(response.status).toBe(200)
+    })
+
+    it('should return a status of 404 if not OK', async () => {
+      const id = -1
+      const response = await request(app).get(`/api/v1/projects/${id}`)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should return a specific project in the DB if the response is OK', async () => {
+      const expectedProject = projects[0]
+      const foundProject = await database('projects').first()
+      const id = foundProject.id
+
+      const response = await request(app).get(`/api/v1/projects/${id}`)
+      const results = response.body
+
+      expect(results.project_name).toEqual(expectedProject.project_name)
+    })
+  })
+
 })
