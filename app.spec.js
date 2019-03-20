@@ -241,4 +241,44 @@ describe('Server', () => {
     })
   })
 
+  describe('DELETE /api/v1/projects/:id', () => {
+    it('should return a status of 202 if delete is successful', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/`)
+
+      expect(response.status).toBe(202)
+    })
+
+    it('should return a status of 404 if there is no palette to delete', async () => {
+      const id = -99
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/`)
+
+      expect(response.status).toBe(404)
+    })
+
+    it('should delete the correct project', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+
+      const response = await request(app).delete(`/api/v1/projects/${id}/`)
+      const expected = `Deleted project with ID of ${id}`
+      const foundProjects = await database('projects').where('id', id)
+      
+      expect(response.body).toEqual(expected)
+      expect(foundProjects.length).toEqual(0)
+    })
+
+    it('should delete the associated palettes for a project', async () => {
+      const project = await database('projects').first()
+      const id = project.id
+
+      await request(app).delete(`/api/v1/projects/${id}/`)
+      const foundPalettes = await database('palettes').where('project_id', id)
+
+      expect(foundPalettes.length).toEqual(0)
+    })
+  })
 })
