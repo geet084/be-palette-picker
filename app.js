@@ -6,25 +6,26 @@ const database = require('knex')(configuration);
 
 app.use(express.json())
 
-app.get('/api/v1/projects/:query', (req, res) => {
-  const { query } = req.params
-  database('projects').where('project_name', 'like', `%${query}%`)
-    .then(projects => {
-      res.status(200).json(projects)
-    })
-    .catch(error => {
-      res.status(500).json({ error })
-    })
-})
-
 app.get('/api/v1/projects', (req, res) => {
-  database('projects').select()
-    .then(projects => {
-      res.status(200).json(projects)
-    })
-    .catch(error => {
-      res.status(500).json({ error })
-    })
+  const { project_name } = req.query
+
+  if (project_name) {
+    database('projects').where('project_name', 'like', `%${project_name}%`)
+      .then(projects => {
+        res.status(200).json(projects)
+      })
+      .catch(error => {
+        res.status(500).json({ error })
+      })
+  } else {
+    database('projects').select()
+      .then(projects => {
+        res.status(200).json(projects)
+      })
+      .catch(error => {
+        res.status(500).json({ error })
+      })
+  }
 });
 
 app.get('/api/v1/projects/:id/palettes', (req, res) => {

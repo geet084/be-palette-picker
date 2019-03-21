@@ -25,6 +25,13 @@ describe('Server', () => {
 
       expect(results.length).toEqual(expectedProjects);
     })
+
+    it('should return projects based on a search param', async () => {
+      const response = await request(app).get('/api/v1/projects?project_name=end')
+      const results = response.body
+      
+      expect(results.length).toEqual(2)
+    })
   })
 
   describe('GET /projects/:id/palettes', () => {
