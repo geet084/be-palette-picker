@@ -16,7 +16,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "jest --watchAll",
+    "test": "jest",
+    "dev-test": "jest --watchAll",
     "migrate-test": "knex migrate:latest --env=test",
     "seed-test": "knex seed:run --env=test"
   },
