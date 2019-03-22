@@ -14,4 +14,7 @@ deploy:
   api_key:
     secure: t/+6MIFYgQMYoGQzrSp+OZ3zu6AkKFxPYojkZiz+NnyZCk4bRIA9c9ABD6HhRRU15pq+CUV6xVGtd6L7VLdt6kJ+NHvA9H2AMKAQj9oPaAIfigDHuRTvQnjaR3myXICJnHqApV2JbGehTHo2G5NwxY5A3u9XidfatWRCTIs+CEvSSdQPeFgydys55DyEaBPjAwhFmw+gPz5xNemNe3eW4y7qXoCohviqsrP8ra+PL9s48vO0WU0RJhJSkWiHo4e5qqEAeecW5pnJV8ozaOYpQAsosYDkoh8FgaoqWbaNXAg5RcU/HRPuwXnz+mA/Dy137boFI32SytVAsx4LZNQC7sCIvt3zqb20N6hCaHJ55BwTK38M02x9b9WqKWFSaslt7YD5hTAMsyVBfENK38emGNLvp/IpCmlg+2BKm3hm/AJ1q/eqTisstv57NkZ8qM99dQJ5KEfxPlW/R4gCVoZhB5fIo5s1GACT6invBmlhsLl7xLuA0YhXBpguea1gVcyWCjuv/HgL+n5czdFfoaSE3Vw8RiEJd0+VsdoNaa3L/yMKzfZOX4VOoMcb/T+8JSI+mNUAPrv7xjOCABGrINeEDJaLk+JErQ2ZtZ272UvpFue++hELzVnEvJj1HPPMiE7llzOhXuRWExqfJVeRGrJ3oqDm+TG7I/XZzRHbz5LBhlM=
   app: be-palette-picker
+  run:
+    - 'knex migrate:latest'
+    - 'knex seed:run'
   skip_cleanup: true
