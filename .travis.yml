@@ -1,12 +1,14 @@
 language: node_js
 node_js:
   - "node"
-before_install:
-- sudo apt-get install -y libxml2-dev
+# before_install:
+# - sudo apt-get install -y libxml2-dev
 services:
 - postgresql
 before_script:
   - psql -c 'create database projects_test;' -U postgres
-  test:
-  adapter: postgresql
-  database: projects_test
+  - npm run migrate-test
+  - npm run seed-test
+test:
+adapter: postgresql
+database: projects_test
