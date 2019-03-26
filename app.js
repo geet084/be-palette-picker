@@ -141,7 +141,7 @@ app.delete('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
       } else {
         database('palettes').where('id', parseInt(p_id)).del()
           .then(() => {
-            res.status(202).json(`Deleted palette with ID of ${p_id}`)
+            res.status(202).json(p_id)
           })
       }
     })
@@ -168,7 +168,7 @@ app.delete('/api/v1/projects/:id', (req, res) => {
           } else {
             database('projects').where('id', parseInt(id)).del()
               .then(() => {
-                res.status(202).json(`Deleted project with ID of ${id}`)
+                res.status(202).json(id)
               })
           }
         })
@@ -204,7 +204,7 @@ app.put('/api/v1/projects/:id', (req, res) => {
       } else {
         database('projects').where('id', id).update({ project_name })
           .then(project => {
-            res.status(200).json(`Project with ID of ${id} has been updated successfully.`)
+            res.status(200).json(id)
           })
       }
     })
@@ -245,7 +245,7 @@ app.put('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
           color_5
         })
           .then(palette => {
-            res.status(200).json(`Palette with ID of ${p_id} has been updated successfully.`)
+            res.status(200).json(p_id)
           })
       }
     })
