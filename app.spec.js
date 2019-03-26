@@ -242,9 +242,8 @@ describe('Server', () => {
       const p_id = paletteToDelete[0].id
 
       const response = await request(app).delete(`/api/v1/projects/${id}/palettes/${p_id}`)
-      const expected = `Deleted palette with ID of ${p_id}`
-
-      expect(response.body).toEqual(expected)
+      
+      expect(response.body).toEqual(p_id.toString())
     })
   })
 
@@ -271,10 +270,9 @@ describe('Server', () => {
       const id = project.id
 
       const response = await request(app).delete(`/api/v1/projects/${id}/`)
-      const expected = `Deleted project with ID of ${id}`
       const foundProjects = await database('projects').where('id', id)
       
-      expect(response.body).toEqual(expected)
+      expect(response.body).toEqual(id.toString())
       expect(foundProjects.length).toEqual(0)
     })
 
@@ -325,7 +323,7 @@ describe('Server', () => {
       const updatedProject = { project_name: 'THIS has BEEN updated' }
 
       const response = await request(app).put(`/api/v1/projects/${id}`).send(updatedProject)
-      const expected = `Project with ID of ${id} has been updated successfully.`
+      const expected = {id: (id.toString()), project_name: "THIS has BEEN updated"}
       const foundProject = await database('projects').where('id', id)
       
       expect(response.body).toEqual(expected)
@@ -405,7 +403,7 @@ describe('Server', () => {
       }
 
       const response = await request(app).put(`/api/v1/projects/${id}/palettes/${p_id}`).send(updatedPalette)
-      const expected = `Palette with ID of ${p_id} has been updated successfully.`
+      const expected = {...updatedPalette, p_id: (p_id.toString())}
       const foundPalette = await database('palettes').where('id', p_id)
 
       expect(response.body).toEqual(expected)
