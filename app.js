@@ -182,7 +182,6 @@ app.put('/api/v1/projects/:id', (req, res) => {
   const { id } = req.params
   let found = false
   const { project_name } = req.body
-  console.log(project_name)
 
   for (let reqParam of ['project_name']) {
     if (!req.body[reqParam]) {
