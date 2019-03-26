@@ -204,7 +204,7 @@ app.put('/api/v1/projects/:id', (req, res) => {
       } else {
         database('projects').where('id', id).update({ project_name })
           .then(project => {
-            res.status(200).json(id)
+            res.status(200).json({ id, project })
           })
       }
     })
@@ -245,7 +245,7 @@ app.put('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
           color_5
         })
           .then(palette => {
-            res.status(200).json(p_id)
+            res.status(200).json({ p_id, palette })
           })
       }
     })
