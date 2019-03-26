@@ -181,8 +181,8 @@ app.delete('/api/v1/projects/:id', (req, res) => {
 app.put('/api/v1/projects/:id', (req, res) => {
   const { id } = req.params
   let found = false
-
   const { project_name } = req.body
+  console.log(project_name)
 
   for (let reqParam of ['project_name']) {
     if (!req.body[reqParam]) {
@@ -204,7 +204,7 @@ app.put('/api/v1/projects/:id', (req, res) => {
       } else {
         database('projects').where('id', id).update({ project_name })
           .then(project => {
-            res.status(200).json({ id, project })
+            res.status(200).json({ id, ...req.body })
           })
       }
     })
@@ -245,7 +245,7 @@ app.put('/api/v1/projects/:id/palettes/:p_id', (req, res) => {
           color_5
         })
           .then(palette => {
-            res.status(200).json({ p_id, palette })
+            res.status(200).json({ p_id, ...req.body })
           })
       }
     })
