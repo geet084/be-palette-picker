@@ -176,7 +176,7 @@ Deleted palette with ID of 13
 **Required Input for Request Body**  
 
 | Name       | Type          | Description  |
-| ------------- |: -------------: | ----- |
+| ------------- | :-------------: | ----- |
 | `palette_name`      | `string` | Name of of the new palette |
 | `color_1`      | `string`      |   Hexcode of color in palette |
 | `color_2`  | `string`     |    Hexcode of color in palette |
