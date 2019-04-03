@@ -143,12 +143,13 @@ Request: ```/api/v1/projects/10/palettes/12```
 
 **Required:**
 The ID of the project to be deleted or the ID of the project and the specific palette ID 
-### ```DELETE /api/v1/projects/:id```  
-### ```DELETE /api/v1/projects/:id/palttes/:p_id```  
+### ```DELETE /api/v1/projects/:id``` 
 **Example Response**
 ```
 Deleted project with ID of 13
 ```
+### ```DELETE /api/v1/projects/:id/palttes/:p_id```  
+**Example Response**
 ```
 Deleted palette with ID of 13
 ```
